@@ -29,7 +29,7 @@ class RetailAppTimer {
     }
 
     private static String buildLogStatment(Map logValues, long millis, long micros, Exception e) {
-        StringBuilder builder = new StringBuilder("Retail App Timed Execution Complete; elapsedTime=${millis}; elapsedMicros=${micros}; error=${e};")
+        StringBuilder builder = new StringBuilder("Retail App Timed Execution Complete; elapsedTimeInMs=${millis}; elapsedTimeInMicros=${micros}; error=${e};")
         logValues.each {logKey, value ->
             builder.append(" ${logKey}=${value};")
         }

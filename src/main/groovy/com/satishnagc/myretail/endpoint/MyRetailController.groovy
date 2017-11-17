@@ -1,7 +1,9 @@
 package com.satishnagc.myretail.endpoint
 
 import com.satishnagc.myretail.common.RetailAppTimer
+import com.satishnagc.myretail.product.ProductService
 import groovy.util.logging.Slf4j
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
@@ -19,6 +21,10 @@ import static org.springframework.http.HttpStatus.OK
 class MyRetailController {
 
 
+    @Autowired
+    ProductService redSkyProductService
+
+
     @RequestMapping(value = "products/{id}", method = RequestMethod.GET, produces = 'application/json;charset=UTF-8')
     @ResponseStatus(value = OK)
     @ResponseBody
@@ -28,7 +34,7 @@ class MyRetailController {
         String xRequestID = httpServletRequest.getHeader('X-REQUEST-ID')
 
         log.info("Received Product request for id=${productId}, X-REQUEST-ID: ${xRequestID}")
-        RetailAppTimer.execute(['X-REQUEST-ID':xRequestID,'productId':productId],{})
-        return productId
+        return RetailAppTimer.execute(['X-REQUEST-ID':xRequestID,'productId':productId],
+                {redSkyProductService.getProductName(productId)})
     }
 }
