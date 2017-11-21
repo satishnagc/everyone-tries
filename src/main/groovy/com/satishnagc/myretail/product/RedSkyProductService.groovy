@@ -2,6 +2,7 @@ package com.satishnagc.myretail.product
 
 import com.satishnagc.myretail.integration.http.RedSkyHttpClient
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Component
 
@@ -13,7 +14,11 @@ class RedSkyProductService implements ProductService<Map>{
 
     @Override
     ResponseEntity getProductDetails(String productId) {
-        redSkyHttpClient.getRedSkyProductDetails(productId)
+        ResponseEntity responseEntity = redSkyHttpClient.getRedSkyProductDetails(productId)
+        if(responseEntity?.statusCode == HttpStatus.OK){
+            return responseEntity
+        }
+        return null
     }
 
     @Override
