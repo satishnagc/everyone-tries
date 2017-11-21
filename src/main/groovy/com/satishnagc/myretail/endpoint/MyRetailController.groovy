@@ -5,7 +5,6 @@ import com.satishnagc.myretail.common.RetailAppTimer
 import com.satishnagc.myretail.domain.ProductData
 import com.satishnagc.myretail.product.ProductAggregatorService
 import com.satishnagc.myretail.product.ProductDataStoreService
-import com.satishnagc.myretail.product.ProductService
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller

@@ -16,7 +16,6 @@ class ProductAggregatorService {
     ProductDataStoreService productDataStoreService
 
 
-
     def getProductDetails(String productId){
 
         String productName = redSkyProductService.getProductName(productId)

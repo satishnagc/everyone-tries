@@ -1,5 +1,6 @@
 package com.satishnagc.myretail.integration.http
 
+import com.satishnagc.myretail.exception.MyRetailRetryEnabledException
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpEntity
@@ -7,6 +8,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.retry.annotation.Retryable
 import org.springframework.stereotype.Component
 import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.HttpServerErrorException
@@ -19,6 +21,9 @@ class RedSkyHttpClient {
     @Autowired
     RestTemplate myRetailRestTemplate
 
+    @Retryable( value = MyRetailRetryEnabledException,
+            maxAttempts = 2
+    )
     ResponseEntity<Map> getRedSkyProductDetails(String productId){
 
         ResponseEntity<Map> responseEntity = null
@@ -36,7 +41,7 @@ class RedSkyHttpClient {
 
         } catch (Exception e) {
             log.error("RedSkyHttpClient::RestTemplate threw an exception url=$url X-REQUEST-ID=$xRequest", e.message)
-            throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR,"RedSkyHttpClient Rest Call Failed.")
+            throw new MyRetailRetryEnabledException("RedSkyHttpClient Rest Call Failed.Retry enabled, failed after max attempts")
         }
         responseEntity
     }
