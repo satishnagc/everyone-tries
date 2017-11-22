@@ -28,12 +28,12 @@ class MyRetailApplication extends SpringBootServletInitializer {
         log.info('initializing spring application')
         ApplicationContext context = SpringApplication.run(MyRetailApplication.class, args)
 
-        System.out.println("Beans provided by Spring Boot:")
-
-        String[] beanNames = context.getBeanDefinitionNames()
-        Arrays.sort(beanNames)
-        for (String beanName : beanNames) {
-            System.out.println(beanName)
-        }
+//        System.out.println("Beans provided by Spring Boot:")
+//
+//        String[] beanNames = context.getBeanDefinitionNames()
+//        Arrays.sort(beanNames)
+//        for (String beanName : beanNames) {
+//            System.out.println(beanName)
+//        }
     }
 }

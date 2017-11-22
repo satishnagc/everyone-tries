@@ -6,6 +6,7 @@ import com.satishnagc.myretail.domain.ProductData
 import com.satishnagc.myretail.product.ProductAggregatorService
 import com.satishnagc.myretail.product.ProductDataStoreService
 import groovy.util.logging.Slf4j
+import org.apache.commons.codec.binary.StringUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.PathVariable
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.ResponseStatus
 
 import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
+import java.text.ParseException
 
 import static org.springframework.http.HttpStatus.OK
 
@@ -39,19 +42,28 @@ class MyRetailController {
     @ResponseStatus(value = OK)
     @ResponseBody
     def getProductDetails(
-            @PathVariable(value = "id") String productId , HttpServletRequest httpServletRequest) {
+            @PathVariable(value = "id") String productId , HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
 
-        //TODO Check if id is a number and reject others
         String xRequestID = httpServletRequest.getHeader('X-REQUEST-ID')
 
+        try{
+            Integer.parseInt(productId)
+        }catch(NumberFormatException ex){
+            httpServletResponse.sendError(HttpServletResponse.SC_BAD_REQUEST,"ProductId is invalid.")
+            httpServletResponse.getWriter().close()
+            return
+        }
+
         log.info("Received Product GET request for id=${productId}, X-REQUEST-ID: ${xRequestID}")
-//        return RetailAppTimer.execute(
-//                ['X-REQUEST-ID':xRequestID,'productId':productId,'operation': 'getProductDetails'],
-//                {productAggregatorService.getProductDetails(productId)}
-//        )
 
+        ProductData response = productAggregatorService.getProductDetails(productId)
 
-        return productAggregatorService.getProductDetails(productId)
+        if(response){
+            return response
+        }else {
+            httpServletResponse.sendError(HttpServletResponse.SC_BAD_REQUEST,"No data found for the given ProductId.")
+            httpServletResponse.getWriter().close()
+        }
     }
 
 
@@ -59,16 +71,33 @@ class MyRetailController {
     @ResponseStatus(value = OK)
     @ResponseBody
     def writeProductDetails(
-            @PathVariable(value = "id") String productId , @RequestBody def data, HttpServletRequest httpServletRequest) {
+            @PathVariable(value = "id") String productId , @RequestBody def data, HttpServletRequest httpServletRequest,HttpServletResponse httpServletResponse) {
         String xRequestID = httpServletRequest.getHeader('X-REQUEST-ID')
+        ProductData productData
+        try{
 
-        //TODO Check if product id from url path is same as body else throw error
+            productData = objectMapper.readValue(objectMapper.writeValueAsString(data),ProductData)
+            Integer.parseInt(productData?.productId)
+
+            if(!(productData?.productId?.equalsIgnoreCase(productId))){
+                httpServletResponse.sendError(HttpServletResponse.SC_BAD_REQUEST,"ProductId is invalid.")
+                httpServletResponse.getWriter().close()
+                return
+            }
+
+        }catch(Exception ex){
+            httpServletResponse.sendError(HttpServletResponse.SC_BAD_REQUEST,"Data is invalid.")
+            httpServletResponse.getWriter().close()
+            return
+        }
 
         log.info("Received Product PUT request for id=${productId}, X-REQUEST-ID: ${xRequestID}")
 
          RetailAppTimer.execute(
                 ['X-REQUEST-ID':xRequestID,'productId':productId, 'operation': 'writeProductDetails'],
-                 {productDataStoreService.writeProductDetails(objectMapper.readValue(objectMapper.writeValueAsString(data),ProductData))}
+                 {productDataStoreService.writeProductDetails(productData)}
          )
+
+        "Successfully inserted productId=${productId} in the datastore."
     }
 }

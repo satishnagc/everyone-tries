@@ -52,7 +52,8 @@ class ProductDao extends CassandraDao{
     }
 
     ProductData selectFirstRecord(ProductData productData){
-        select(productData)?.first()
+        List<ProductData> productDatas = select(productData)
+        (productDatas?.isEmpty())? null : productDatas?.get(0)
     }
 
     List<ProductData> select(ProductData productData) {

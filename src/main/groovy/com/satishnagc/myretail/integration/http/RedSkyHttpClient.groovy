@@ -21,6 +21,16 @@ class RedSkyHttpClient {
     @Autowired
     RestTemplate myRetailRestTemplate
 
+
+    /**
+     * @input : productId in String
+     * @Output : ResponseEntity with Map as body
+     * @throws : MyRetailRetryEnabledException after maxAttempts have been exhausted.
+     *          HttpServerErrorException with status Code if they are part of list which does not benefit from retry.
+     *
+     * */
+
+
     @Retryable( value = MyRetailRetryEnabledException,
             maxAttempts = 2
     )

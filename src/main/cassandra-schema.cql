@@ -16,3 +16,4 @@ AND compaction = {
 	'class' : 'DateTieredCompactionStrategy',
 	'timestamp_resolution' : 'MILLISECONDS'
 };
+

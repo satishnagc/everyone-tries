@@ -22,6 +22,10 @@ class CassandraProductService implements ProductDataStoreService{
 
     @Override
     ProductData getProductDetails(ProductData productData) {
-        productDao.selectFirstRecord(productData)
+        try{
+            productDao.selectFirstRecord(productData)
+        }catch (Exception ex){
+            log.error("Cassandra has resulted in an exception", ex)
+        }
     }
 }
