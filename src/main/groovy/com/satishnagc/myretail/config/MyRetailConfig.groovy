@@ -39,6 +39,8 @@ import javax.net.ssl.SSLContext
 @Slf4j
 class MyRetailConfig {
 
+
+    //TODO add PropertySource to read @Config values instead of hardcode.
     @Bean
     ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new ObjectMapper()

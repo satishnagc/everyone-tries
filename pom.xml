@@ -21,7 +21,9 @@
         <datastax.cassandra.version>2.1.10</datastax.cassandra.version>
         <spock.version>1.0-groovy-2.4</spock.version>
         <spring.framework.version>4.2.5.RELEASE</spring.framework.version>
+        <jmavenplus.version>1.5</jmavenplus.version>
 
+        <surefire.version>2.19.1</surefire.version>
 
     </properties>
 
@@ -40,14 +42,6 @@
                     <artifactId>logback-classic</artifactId>
                     <groupId>ch.qos.logback</groupId>
                 </exclusion>
-
-                <!--Had some problem, hence the exclusion but spring boot plugin doesnt work with-->
-                <!--this exclusion-->
-                <!--<exclusion>-->
-                    <!--<groupId>org.springframework.boot</groupId>-->
-                    <!--<artifactId>spring-boot-starter-tomcat</artifactId>-->
-                <!--</exclusion>-->
-
                 <exclusion>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-starter-logging</artifactId>
@@ -196,16 +190,6 @@
                     </dependencies>
                 </plugin>
 
-
-
-
-                <!--test application without creating war-->
-                <!--<plugin>-->
-                <!--<groupId>org.eclipse.jetty</groupId>-->
-                <!--<artifactId>jetty-maven-plugin</artifactId>-->
-                <!--<version>9.3.5.v20151012</version>-->
-                <!--</plugin>-->
-
             </plugins>
         </pluginManagement>
 
@@ -242,6 +226,36 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.gmavenplus</groupId>
+                <artifactId>gmavenplus-plugin</artifactId>
+                <version>${jmavenplus.version}</version>
+                <configuration>
+                    <targetBytecode>${java.version}</targetBytecode>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>addSources</goal>
+                            <goal>addTestSources</goal>
+                            <goal>compile</goal>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${surefire.version}</version>
+                <configuration>
+                    <argLine>-XX:MaxPermSize=512m</argLine>
+                    <includes>
+                        <include>**/*Spec.*</include>
+                    </includes>
+                </configuration>
             </plugin>
 
             <plugin>
